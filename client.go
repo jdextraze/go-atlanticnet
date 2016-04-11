@@ -20,7 +20,7 @@ type Client interface {
 	DescribePlan(name, platform string) ([]Plan, error)
 
 	ListInstances() ([]Instance, error)
-	RunInstance(serverName string, imageId string, planName string, vmLocation string) ([]RunInstance, error)
+	RunInstance(req runInstanceRequest) ([]RunInstance, error)
 	TerminateInstance(instanceId string) ([]TerminateInstance, error)
 	DescribeInstance(instanceId string) (*InstanceDescription, error)
 	RebootInstance(instanceId string, rebootType RebootType) (*RebootInstance, error)

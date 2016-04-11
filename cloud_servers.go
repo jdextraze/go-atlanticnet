@@ -1,6 +1,9 @@
 package atlanticnet
 
-import "log"
+import (
+	"log"
+	"strconv"
+)
 
 type Instance struct {
 	Id                 string `json:"InstanceId"`
@@ -69,15 +72,42 @@ type runInstanceDTO struct {
 	RunInstanceResponse runInstanceResponse `json:"run-instanceresponse"`
 }
 
-func (c *client) RunInstance(serverName string, imageId string, planName string, vmLocation string) ([]RunInstance, error) {
-	in := map[string]string{
-		"servername":  serverName,
-		"imageid":     imageId,
-		"planname":    planName,
-		"vm_location": vmLocation,
+type runInstanceRequest struct {
+	ServerName   string
+	ImageId      string
+	PlanName     string
+	VMLocation   string
+	EnableBackup bool
+	CloneImage   string
+	ServerQty    int
+	KeyId        string
+}
+
+func (r runInstanceRequest) ToMap() map[string]string {
+	req := map[string]string{
+		"servername":  r.ServerName,
+		"imageid":     r.ImageId,
+		"planname":    r.PlanName,
+		"vm_location": r.VMLocation,
 	}
+	if r.EnableBackup {
+		req["enablebackup"] = "Y"
+	}
+	if r.CloneImage != "" {
+		req["cloneimage"] = r.CloneImage
+	}
+	if r.ServerQty > 0 {
+		req["serverqty"] = strconv.Itoa(r.ServerQty)
+	}
+	if r.KeyId != "" {
+		req["key_id"] = r.KeyId
+	}
+	return req
+}
+
+func (c *client) RunInstance(req runInstanceRequest) ([]RunInstance, error) {
 	out := runInstanceDTO{}
-	err := c.doRequest("run-instance", in, &out)
+	err := c.doRequest("run-instance", req.ToMap(), &out)
 	if err != nil {
 		return nil, err
 	} else if out.Error != nil {
