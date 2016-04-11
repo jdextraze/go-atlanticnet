@@ -72,7 +72,7 @@ type runInstanceDTO struct {
 	RunInstanceResponse runInstanceResponse `json:"run-instanceresponse"`
 }
 
-type runInstanceRequest struct {
+type RunInstanceRequest struct {
 	ServerName   string
 	ImageId      string
 	PlanName     string
@@ -83,7 +83,7 @@ type runInstanceRequest struct {
 	KeyId        string
 }
 
-func (r runInstanceRequest) ToMap() map[string]string {
+func (r RunInstanceRequest) ToMap() map[string]string {
 	req := map[string]string{
 		"servername":  r.ServerName,
 		"imageid":     r.ImageId,
@@ -105,7 +105,7 @@ func (r runInstanceRequest) ToMap() map[string]string {
 	return req
 }
 
-func (c *client) RunInstance(req runInstanceRequest) ([]RunInstance, error) {
+func (c *client) RunInstance(req RunInstanceRequest) ([]RunInstance, error) {
 	out := runInstanceDTO{}
 	err := c.doRequest("run-instance", req.ToMap(), &out)
 	if err != nil {
